@@ -922,10 +922,13 @@ export class VizSpecStore {
     }
     public exportViewSpec() {
         const pureVisList = dumpsGWPureSpec(this.visList);
-        console.log('pureVisList: ', pureVisList);
-        console.log('exportedViewSpec: ', this.visSpecEncoder(pureVisList));
         return this.visSpecEncoder(pureVisList);
     }
+
+    public exportViewSpecWithCB(cb: (visualSpec: IVisSpecForExport[]) => void): void {
+        return cb(this.exportViewSpec());
+    }
+
     public importStoInfo(stoInfo: IStoInfo) {
         this.visList = parseGWPureSpec(visSpecDecoder(forwardVisualConfigs(stoInfo.specList)));
         this.visIndex = 0;

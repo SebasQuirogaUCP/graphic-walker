@@ -31,8 +31,9 @@ import {
     ISegmentKey,
     IThemeKey,
     IVisSpec,
+    IVisSpecForExport,
     Specification,
-    VegaGlobalConfig
+    VegaGlobalConfig,
 } from './interfaces';
 import { mergeLocaleRes, setLocaleLanguage } from './locales/i18n';
 import ReactiveRenderer from './renderer/index';
@@ -49,7 +50,9 @@ export interface IGWProps {
     dataSource?: IRow[];
     rawFields?: IMutField[];
     spec?: Specification;
+    // TODO: Pending development
     viewSpec?: IVisSpec[];
+    saveVisSpec?: (spec: IVisSpecForExport[]) => void;
     hideDataSourceConfig?: boolean;
     i18nLang?: string;
     i18nResources?: { [lang: string]: Record<string, string | any> };
@@ -87,6 +90,7 @@ const App = observer<IGWProps>(function App(props) {
     const {
         dataSource = [],
         rawFields = [],
+        saveVisSpec,
         spec,
         i18nLang = 'en-US',
         i18nResources,
@@ -228,6 +232,7 @@ const App = observer<IGWProps>(function App(props) {
                                     darkModePreference={dark}
                                     exclude={toolbar?.exclude}
                                     extra={toolbar?.extra}
+                                    saveVisSpec={saveVisSpec}
                                 />
                                 <CodeExport />
 

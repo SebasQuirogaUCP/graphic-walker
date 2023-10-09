@@ -37,7 +37,7 @@ import { ResizeDialog } from '../components/sizeSetting';
 import { ImageWithFallback } from '../components/timeoutImg';
 import Toolbar, { ToolbarItemProps } from '../components/toolbar';
 import { GLOBAL_CONFIG } from '../config';
-import { IDarkMode, IStackMode } from '../interfaces';
+import { IDarkMode, IStackMode, IVisSpecForExport } from '../interfaces';
 import { useGlobalStore } from '../store';
 import { useCurrentMediaTheme } from '../utils/media';
 import throttle from '../utils/throttle';
@@ -73,9 +73,10 @@ interface IVisualSettings {
     csvHandler?: React.MutableRefObject<{ download: () => void }>;
     exclude?: string[];
     extra?: ToolbarItemProps[];
+    saveVisSpec?: (spec: IVisSpecForExport[]) => void;
 }
 
-const VisualSettings: React.FC<IVisualSettings> = ({ rendererHandler, darkModePreference, csvHandler, extra = [], exclude = [] }) => {
+const VisualSettings: React.FC<IVisualSettings> = ({ rendererHandler, darkModePreference, csvHandler, extra = [], exclude = [], saveVisSpec }) => {
     const { vizStore, commonStore } = useGlobalStore();
     const { visualConfig, canUndo, canRedo, limit } = vizStore;
     const { t: tGlobal } = useTranslation();
@@ -129,8 +130,7 @@ const VisualSettings: React.FC<IVisualSettings> = ({ rendererHandler, darkModePr
                 label: 'Save Visualization',
                 icon: () => <ArrowUpOnSquareIcon />,
                 onClick: () => {
-                    const exportViewSpec = vizStore.exportViewSpec();
-                    console.info(exportViewSpec);
+                    vizStore.exportViewSpecWithCB((visualSpec) => (saveVisSpec ? saveVisSpec(visualSpec) : visualSpec));
                 },
             },
             {
