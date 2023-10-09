@@ -1,47 +1,48 @@
 import {
+    ArrowPathIcon,
+    ArrowUpOnSquareIcon,
     ArrowUturnLeftIcon,
+    ArrowUturnRightIcon,
+    ArrowsPointingOutIcon,
+    ArrowsUpDownIcon,
     BarsArrowDownIcon,
     BarsArrowUpIcon,
-    PhotoIcon,
-    ArrowPathIcon,
-    ArrowsPointingOutIcon,
-    CubeIcon,
-    Square3Stack3DIcon,
-    StopIcon,
-    ArrowUturnRightIcon,
-    LockClosedIcon,
-    LockOpenIcon,
-    WrenchIcon,
-    ChevronUpDownIcon,
-    XMarkIcon,
     ChevronDoubleUpIcon,
-    ArrowsUpDownIcon,
-    LightBulbIcon,
+    ChevronUpDownIcon,
     CodeBracketSquareIcon,
     Cog6ToothIcon,
-    TableCellsIcon,
-    MapPinIcon,
+    CubeIcon,
     GlobeAltIcon,
-    RectangleGroupIcon,
     GlobeAmericasIcon,
     HashtagIcon,
+    LightBulbIcon,
+    LockClosedIcon,
+    LockOpenIcon,
+    MapPinIcon,
+    PhotoIcon,
+    RectangleGroupIcon,
+    Square3Stack3DIcon,
+    StopIcon,
+    TableCellsIcon,
+    WrenchIcon,
+    XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { observer } from 'mobx-react-lite';
 import React, { SVGProps, useCallback, useMemo } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import KanariesLogo from '../assets/kanaries.png';
+import LimitSetting from '../components/limitSetting';
 import { ResizeDialog } from '../components/sizeSetting';
-import { GLOBAL_CONFIG } from '../config';
-import { useGlobalStore } from '../store';
-import { IStackMode, IDarkMode } from '../interfaces';
-import { IReactVegaHandler } from '../vis/react-vega';
+import { ImageWithFallback } from '../components/timeoutImg';
 import Toolbar, { ToolbarItemProps } from '../components/toolbar';
-import { ButtonWithShortcut } from './menubar';
+import { GLOBAL_CONFIG } from '../config';
+import { IDarkMode, IStackMode } from '../interfaces';
+import { useGlobalStore } from '../store';
 import { useCurrentMediaTheme } from '../utils/media';
 import throttle from '../utils/throttle';
-import KanariesLogo from '../assets/kanaries.png';
-import { ImageWithFallback } from '../components/timeoutImg';
-import LimitSetting from '../components/limitSetting';
+import { IReactVegaHandler } from '../vis/react-vega';
+import { ButtonWithShortcut } from './menubar';
 
 const Invisible = styled.div`
     clip: rect(1px, 1px, 1px, 1px);
@@ -74,13 +75,7 @@ interface IVisualSettings {
     extra?: ToolbarItemProps[];
 }
 
-const VisualSettings: React.FC<IVisualSettings> = ({
-    rendererHandler,
-    darkModePreference,
-    csvHandler,
-    extra = [],
-    exclude = [],
-}) => {
+const VisualSettings: React.FC<IVisualSettings> = ({ rendererHandler, darkModePreference, csvHandler, extra = [], exclude = [] }) => {
     const { vizStore, commonStore } = useGlobalStore();
     const { visualConfig, canUndo, canRedo, limit } = vizStore;
     const { t: tGlobal } = useTranslation();
@@ -113,11 +108,10 @@ const VisualSettings: React.FC<IVisualSettings> = ({
 
     const downloadBase64 = useCallback(
         throttle(() => {
-            rendererHandler?.current?.getCanvasData().then(x => navigator.clipboard.writeText(x.join(',')));
+            rendererHandler?.current?.getCanvasData().then((x) => navigator.clipboard.writeText(x.join(',')));
         }, 200),
         [rendererHandler]
     );
-
 
     const downloadCSV = useCallback(
         throttle(() => {
@@ -131,18 +125,22 @@ const VisualSettings: React.FC<IVisualSettings> = ({
     const items = useMemo<ToolbarItemProps[]>(() => {
         const builtInItems = [
             {
+                key: 'Save',
+                label: 'Save Visualization',
+                icon: () => <ArrowUpOnSquareIcon />,
+                onClick: () => {
+                    const exportViewSpec = vizStore.exportViewSpec();
+                    console.info(exportViewSpec);
+                },
+            },
+            {
                 key: 'undo',
                 label: 'undo (Ctrl + Z)',
                 icon: () => (
                     <>
                         <ArrowUturnLeftIcon />
                         <Invisible aria-hidden>
-                            <ButtonWithShortcut
-                                label="undo"
-                                disabled={!canUndo}
-                                handler={vizStore.undo.bind(vizStore)}
-                                shortcut="Ctrl+Z"
-                            />
+                            <ButtonWithShortcut label="undo" disabled={!canUndo} handler={vizStore.undo.bind(vizStore)} shortcut="Ctrl+Z" />
                         </Invisible>
                     </>
                 ),
@@ -156,12 +154,7 @@ const VisualSettings: React.FC<IVisualSettings> = ({
                     <>
                         <ArrowUturnRightIcon />
                         <Invisible aria-hidden>
-                            <ButtonWithShortcut
-                                label="redo"
-                                disabled={!canRedo}
-                                handler={vizStore.redo.bind(vizStore)}
-                                shortcut="Ctrl+Shift+Z"
-                            />
+                            <ButtonWithShortcut label="redo" disabled={!canRedo} handler={vizStore.redo.bind(vizStore)} shortcut="Ctrl+Shift+Z" />
                         </Invisible>
                     </>
                 ),
@@ -254,11 +247,7 @@ const VisualSettings: React.FC<IVisualSettings> = ({
                                 aria-hidden
                                 {...props}
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M9,12 A3,3,0,0,1,16,12 A3,3,0,0,1,9,12"
-                                />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9,12 A3,3,0,0,1,16,12 A3,3,0,0,1,9,12" />
                             </svg>
                         ),
                         circle: (props: SVGProps<SVGSVGElement>) => (
@@ -271,11 +260,7 @@ const VisualSettings: React.FC<IVisualSettings> = ({
                                 aria-hidden
                                 {...props}
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M6,12 A6,6,0,0,1,18,12 A6,6,0,0,1,6,12"
-                                />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6,12 A6,6,0,0,1,18,12 A6,6,0,0,1,6,12" />
                             </svg>
                         ),
                         tick: (props: SVGProps<SVGSVGElement>) => (
@@ -331,11 +316,7 @@ const VisualSettings: React.FC<IVisualSettings> = ({
                                 aria-hidden
                                 {...props}
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M12,21l-9,-15a12,12,0,0,1,18,0Z"
-                                />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12,21l-9,-15a12,12,0,0,1,18,0Z" />
                             </svg>
                         ),
                         boxplot: (props: SVGProps<SVGSVGElement>) => (
@@ -348,11 +329,7 @@ const VisualSettings: React.FC<IVisualSettings> = ({
                                 aria-hidden
                                 {...props}
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M7,7v9h10v-9Zm0,4h8M12,7v-6m-3,0h6M12,16v7m-3,0h6"
-                                />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M7,7v9h10v-9Zm0,4h8M12,7v-6m-3,0h6M12,16v7m-3,0h6" />
                             </svg>
                         ),
                         table: (props: SVGProps<SVGSVGElement>) => (
@@ -424,7 +401,7 @@ const VisualSettings: React.FC<IVisualSettings> = ({
                 label: t('table.summary'),
                 icon: TableCellsIcon,
                 checked: showTableSummary,
-                onChange: checked => {
+                onChange: (checked) => {
                     vizStore.setVisualConfig('showTableSummary', checked);
                 },
             },
@@ -477,29 +454,43 @@ const VisualSettings: React.FC<IVisualSettings> = ({
                 key: 'coord_system',
                 label: tGlobal('constant.coord_system.__enum__'),
                 icon: StopIcon,
-                options: GLOBAL_CONFIG.COORD_TYPES.map(c => ({
+                options: GLOBAL_CONFIG.COORD_TYPES.map((c) => ({
                     key: c,
                     label: tGlobal(`constant.coord_system.${c}`),
                     icon: {
-                        generic: (props: SVGProps<SVGSVGElement>) => <svg stroke="currentColor" fill="none" strokeWidth="1.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M2 12h20M12 2v20" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 7h2M12 16h2M7 12v-2M16 12v-2"/></svg>,
+                        generic: (props: SVGProps<SVGSVGElement>) => (
+                            <svg
+                                stroke="currentColor"
+                                fill="none"
+                                strokeWidth="1.5"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                aria-hidden
+                                {...props}
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M2 12h20M12 2v20" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 7h2M12 16h2M7 12v-2M16 12v-2" />
+                            </svg>
+                        ),
                         geographic: GlobeAltIcon,
                     }[c],
                 })),
                 value: coordSystem,
-                onSelect: value => {
-                    const coord = value as typeof GLOBAL_CONFIG.COORD_TYPES[number];
+                onSelect: (value) => {
+                    const coord = value as (typeof GLOBAL_CONFIG.COORD_TYPES)[number];
                     vizStore.setVisualConfig('coordSystem', coord);
                     vizStore.setVisualConfig('geoms', [GLOBAL_CONFIG.GEMO_TYPES[coord][0]]);
                 },
             },
-            coordSystem === 'geographic' && markType === 'choropleth' && {
-                key: 'geojson',
-                label: t('button.geojson'),
-                icon: GlobeAmericasIcon,
-                onClick: () => {
-                    commonStore.setShowGeoJSONConfigPanel(true);
+            coordSystem === 'geographic' &&
+                markType === 'choropleth' && {
+                    key: 'geojson',
+                    label: t('button.geojson'),
+                    icon: GlobeAmericasIcon,
+                    onClick: () => {
+                        commonStore.setShowGeoJSONConfigPanel(true);
+                    },
                 },
-            },
             '-',
             {
                 key: 'debug',
@@ -510,48 +501,46 @@ const VisualSettings: React.FC<IVisualSettings> = ({
                     vizStore.setVisualConfig('showActions', checked);
                 },
             },
-            ...coordSystem === 'generic' ?[{
-                key: 'export_chart',
-                label: t('button.export_chart'),
-                icon: PhotoIcon,
-                form: (
-                    <FormContainer className={dark ? 'dark' : ''}>
-                        <button
-                            className={`text-xs pt-1 pb-1 pl-6 pr-6 ${
-                                dark
-                                    ? 'dark bg-zinc-900 text-gray-100 hover:bg-gray-700'
-                                    : 'bg-white hover:bg-gray-200 text-gray-800'
-                            }`}
-                            aria-label={t('button.export_chart_as', { type: 'png' })}
-                            onClick={() => downloadPNG()}
-                        >
-                            {t('button.export_chart_as', { type: 'png' })}
-                        </button>
-                        <button
-                            className={`text-xs pt-1 pb-1 pl-6 pr-6 ${
-                                dark
-                                    ? 'dark bg-zinc-900 text-gray-100 hover:bg-gray-700'
-                                    : 'bg-white hover:bg-gray-200 text-gray-800'
-                            }`}
-                            aria-label={t('button.export_chart_as', { type: 'svg' })}
-                            onClick={() => downloadSVG()}
-                        >
-                            {t('button.export_chart_as', { type: 'svg' })}
-                        </button>
-                        <button
-                            className={`text-xs pt-1 pb-1 pl-6 pr-6 ${
-                                dark
-                                    ? 'dark bg-zinc-900 text-gray-100 hover:bg-gray-700'
-                                    : 'bg-white hover:bg-gray-200 text-gray-800'
-                            }`}
-                            aria-label={t('button.export_chart_as', { type: 'base64' })}
-                            onClick={() => downloadBase64()}
-                        >
-                            {t('button.export_chart_as', { type: 'base64' })}
-                        </button>
-                    </FormContainer>
-                ),
-            }]:[],
+            ...(coordSystem === 'generic'
+                ? [
+                      {
+                          key: 'export_chart',
+                          label: t('button.export_chart'),
+                          icon: PhotoIcon,
+                          form: (
+                              <FormContainer className={dark ? 'dark' : ''}>
+                                  <button
+                                      className={`text-xs pt-1 pb-1 pl-6 pr-6 ${
+                                          dark ? 'dark bg-zinc-900 text-gray-100 hover:bg-gray-700' : 'bg-white hover:bg-gray-200 text-gray-800'
+                                      }`}
+                                      aria-label={t('button.export_chart_as', { type: 'png' })}
+                                      onClick={() => downloadPNG()}
+                                  >
+                                      {t('button.export_chart_as', { type: 'png' })}
+                                  </button>
+                                  <button
+                                      className={`text-xs pt-1 pb-1 pl-6 pr-6 ${
+                                          dark ? 'dark bg-zinc-900 text-gray-100 hover:bg-gray-700' : 'bg-white hover:bg-gray-200 text-gray-800'
+                                      }`}
+                                      aria-label={t('button.export_chart_as', { type: 'svg' })}
+                                      onClick={() => downloadSVG()}
+                                  >
+                                      {t('button.export_chart_as', { type: 'svg' })}
+                                  </button>
+                                  <button
+                                      className={`text-xs pt-1 pb-1 pl-6 pr-6 ${
+                                          dark ? 'dark bg-zinc-900 text-gray-100 hover:bg-gray-700' : 'bg-white hover:bg-gray-200 text-gray-800'
+                                      }`}
+                                      aria-label={t('button.export_chart_as', { type: 'base64' })}
+                                      onClick={() => downloadBase64()}
+                                  >
+                                      {t('button.export_chart_as', { type: 'base64' })}
+                                  </button>
+                              </FormContainer>
+                          ),
+                      },
+                  ]
+                : []),
             {
                 key: 'csv',
                 label: t('button.export_chart_as', { type: 'csv' }),
@@ -617,7 +606,7 @@ const VisualSettings: React.FC<IVisualSettings> = ({
             case 'table':
                 return items;
             default:
-                return items.filter(item => typeof item === 'string' || item.key !== 'table:summary');
+                return items.filter((item) => typeof item === 'string' || item.key !== 'table:summary');
         }
     }, [
         vizStore,
