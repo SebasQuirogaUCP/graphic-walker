@@ -1,20 +1,23 @@
-import { toJS } from "mobx";
-import { GLOBAL_CONFIG } from "../config";
-import { DeepReadonly, DraggableFieldState, IVisSpec, IVisualConfig } from "../interfaces";
+import { toJS } from 'mobx';
+import { GLOBAL_CONFIG } from '../config';
+import { DeepReadonly, DraggableFieldState, IVisSpec, IVisualConfig } from '../interfaces';
 
 export class VisSpecWithHistory {
-
     readonly visId: IVisSpec['visId'];
-    private snapshots: Pick<IVisSpec, 'name' | 'encodings' | 'config'>[];
+    private snapshots: Pick<IVisSpec, 'name' | 'encodings' | 'config' | 'dataSet' | 'datasource'>[];
     private cursor: number;
 
     constructor(data: IVisSpec) {
         this.visId = data.visId;
-        this.snapshots = [{
-            name: data.name,
-            encodings: data.encodings,
-            config: data.config,
-        }];
+        this.snapshots = [
+            {
+                name: data.name,
+                encodings: data.encodings,
+                config: data.config,
+                dataSet: data.dataSet,
+                datasource: data.datasource,
+            },
+        ];
         this.cursor = 0;
     }
 
@@ -31,9 +34,8 @@ export class VisSpecWithHistory {
         this.snapshots[this.cursor] = {
             ...this.snapshots[this.cursor],
             ...snapshot,
-        }
+        };
     }
-
 
     private commit(snapshot: Partial<Readonly<VisSpecWithHistory['snapshots'][0]>>): void {
         if (this.batchFlag) {
@@ -62,7 +64,7 @@ export class VisSpecWithHistory {
 
         this.cursor = this.snapshots.length - 1;
 
-        requestAnimationFrame(() => this.batchFlag = false);
+        requestAnimationFrame(() => (this.batchFlag = false));
     }
 
     public get canUndo() {
@@ -128,17 +130,16 @@ export class VisSpecWithHistory {
         });
     }
 
-    public clone () {
+    public clone() {
         const nextVSWH = new VisSpecWithHistory(this.frame);
-        nextVSWH.snapshots = this.snapshots.slice().map(s => ({ ...s }));
+        nextVSWH.snapshots = this.snapshots.slice().map((s) => ({ ...s }));
         nextVSWH.cursor = this.cursor;
         return nextVSWH;
     }
 
-    public exportGW (): IVisSpec {
+    public exportGW(): IVisSpec {
         return {
-            ...this.frame
-        }
+            ...this.frame,
+        };
     }
-
 }

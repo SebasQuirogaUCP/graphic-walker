@@ -1,44 +1,43 @@
-import { IReactionDisposer, makeAutoObservable, observable, reaction, toJS } from 'mobx';
-import produce from 'immer';
-import { feature } from 'topojson-client';
 import type { FeatureCollection } from 'geojson';
+import produce from 'immer';
+import { IReactionDisposer, makeAutoObservable, observable, reaction, toJS } from 'mobx';
+import { nanoid } from 'nanoid';
+import { feature } from 'topojson-client';
+import { GLOBAL_CONFIG } from '../config';
+import { COUNT_FIELD_ID, DATE_TIME_DRILL_LEVELS, DATE_TIME_FEATURE_LEVELS } from '../constants';
 import {
     DataSet,
     DraggableFieldState,
+    IComputationFunction,
+    IFilterFieldForExport,
     IFilterRule,
+    IGeoUrl,
     IGeographicData,
+    ISemanticType,
     ISortMode,
     IStackMode,
     IViewField,
     IVisSpec,
     IVisSpecForExport,
-    IFilterFieldForExport,
     IVisualConfig,
     Specification,
-    IComputationFunction,
-    IGeoUrl,
-    ISemanticType,
 } from '../interfaces';
-import { DATE_TIME_DRILL_LEVELS, DATE_TIME_FEATURE_LEVELS, MEA_KEY_ID, MEA_VAL_ID } from '../constants';
-import { GLOBAL_CONFIG } from '../config';
+import { Field } from '../models/field';
 import { VisSpecWithHistory } from '../models/visSpecHistory';
+import { createCountField, createVirtualFields } from '../utils';
 import {
     IStoInfo,
     dumpsGWPureSpec,
+    forwardVisualConfigs,
+    initEncoding,
+    initVisualConfig,
     parseGWContent,
     parseGWPureSpec,
     stringifyGWContent,
-    initVisualConfig,
-    forwardVisualConfigs,
     visSpecDecoder,
-    initEncoding,
 } from '../utils/save';
-import { CommonStore } from './commonStore';
-import { createCountField, createVirtualFields } from '../utils';
-import { COUNT_FIELD_ID } from '../constants';
-import { nanoid } from 'nanoid';
 import { toWorkflow } from '../utils/workflow';
-import { Field } from '../models/field';
+import { CommonStore } from './commonStore';
 
 function getChannelSizeLimit(channel: string): number {
     if (typeof GLOBAL_CONFIG.CHANNEL_LIMIT[channel] === 'undefined') return Infinity;
@@ -171,6 +170,8 @@ export class VizSpecStore {
                 visId: uniqueId(),
                 config: this.visualConfig,
                 encodings: this.draggableFieldState,
+                dataSet: this.commonStore.datasets,
+                datasource: this.commonStore.dataSources,
             })
         );
         makeAutoObservable(this, {
@@ -326,6 +327,8 @@ export class VizSpecStore {
                 visId: uniqueId(),
                 config: initVisualConfig(),
                 encodings: initEncoding(),
+                dataSet: this.commonStore.datasets,
+                datasource: this.commonStore.dataSources,
             })
         );
         this.visIndex = this.visList.length - 1;
@@ -487,7 +490,7 @@ export class VizSpecStore {
             if (GLOBAL_CONFIG.META_FIELD_KEYS.includes(destinationKey)) {
                 if (!GLOBAL_CONFIG.META_FIELD_KEYS.includes(sourceKey)) return;
                 encodings[sourceKey].splice(sourceIndex, 1);
-                movingField = new Field(movingField).switchAnalyticType(destinationKey === 'dimensions' ? 'dimension' : 'measure')
+                movingField = new Field(movingField).switchAnalyticType(destinationKey === 'dimensions' ? 'dimension' : 'measure');
             }
             const limitSize = getChannelSizeLimit(destinationKey);
             const fixedDestinationIndex = Math.min(destinationIndex, limitSize - 1);
@@ -919,6 +922,8 @@ export class VizSpecStore {
     }
     public exportViewSpec() {
         const pureVisList = dumpsGWPureSpec(this.visList);
+        console.log('pureVisList: ', pureVisList);
+        console.log('exportedViewSpec: ', this.visSpecEncoder(pureVisList));
         return this.visSpecEncoder(pureVisList);
     }
     public importStoInfo(stoInfo: IStoInfo) {
@@ -928,6 +933,7 @@ export class VizSpecStore {
         this.commonStore.dataSources = stoInfo.dataSources;
         this.commonStore.dsIndex = Math.max(stoInfo.datasets.length - 1, 0);
     }
+
     public importRaw(raw: string) {
         const content = parseGWContent(raw);
         this.importStoInfo(content);
@@ -991,10 +997,13 @@ export class VizSpecStore {
                     ...visSpec.config,
                     geojson: visSpec.config.geoUrl ? undefined : visSpec.config.geojson,
                 },
+                datasource: this.commonStore.dataSources,
+                dataSet: this.commonStore.datasets,
             };
         });
         return updatedVisList;
     }
+
     public get limit() {
         return this.visualConfig.limit;
     }

@@ -1,9 +1,9 @@
-import { Config as VgConfig, View } from 'vega';
-import { Config as VlConfig } from 'vega-lite';
 import type { FeatureCollection } from 'geojson';
 import type { feature } from 'topojson-client';
-import type { IViewQuery } from './lib/viewQuery';
+import { Config as VgConfig, View } from 'vega';
+import { Config as VlConfig } from 'vega-lite';
 import { DATE_TIME_DRILL_LEVELS } from './constants';
+import type { IViewQuery } from './lib/viewQuery';
 
 export type DeepReadonly<T extends Record<keyof any, any>> = {
     readonly [K in keyof T]: T[K] extends Record<keyof any, any> ? DeepReadonly<T[K]> : T[K];
@@ -232,11 +232,11 @@ export type IStackMode = 'none' | 'stack' | 'normalize' | 'zero' | 'center';
 export type ICoordMode = 'generic' | 'geographic';
 
 export type IConfigScale = {
-    rangeMax?: number,
-    rangeMin?: number,
-    domainMin?: number,
-    domainMax?: number,
-}
+    rangeMax?: number;
+    rangeMin?: number;
+    domainMin?: number;
+    domainMax?: number;
+};
 
 export interface IVisualConfig {
     defaultAggregated: boolean;
@@ -258,11 +258,11 @@ export interface IVisualConfig {
         timeFormat?: string;
         normalizedNumberFormat?: string;
     };
-    primaryColor?:string;
+    primaryColor?: string;
     colorPalette?: string;
     scale?: {
-        opacity: IConfigScale,
-        size: IConfigScale
+        opacity: IConfigScale;
+        size: IConfigScale;
     };
     resolve: {
         x?: boolean;
@@ -294,6 +294,8 @@ export interface IVisSpec {
     readonly name?: string;
     readonly encodings: DeepReadonly<DraggableFieldState>;
     readonly config: DeepReadonly<IVisualConfig>;
+    readonly datasource: IRow[];
+    readonly dataSet: IDataSet[];
 }
 
 export type SetToArray<T> = T extends object ? (T extends Set<infer U> ? Array<U> : { [K in keyof T]: SetToArray<T[K]> }) : T;
