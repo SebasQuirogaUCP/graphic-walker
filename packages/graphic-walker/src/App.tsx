@@ -24,14 +24,15 @@ import {
     IChannelScales,
     IComputationFunction,
     IDarkMode,
+    IDataSet,
+    IDataSource,
     IGeoDataItem,
     IGeographicData,
     IMutField,
     IRow,
     ISegmentKey,
     IThemeKey,
-    IVisSpec,
-    IVisSpecForExport,
+    IVisImportExportSettings,
     Specification,
     VegaGlobalConfig,
 } from './interfaces';
@@ -43,6 +44,7 @@ import { IGlobalStore, useGlobalStore } from './store';
 import { guardDataKeys } from './utils/dataPrep';
 import { useCurrentMediaTheme } from './utils/media';
 import { ErrorContext } from './utils/reportError';
+import { IStoInfo } from './utils/save';
 import type { IReactVegaHandler } from './vis/react-vega';
 import VisualSettings from './visualSettings';
 
@@ -51,8 +53,8 @@ export interface IGWProps {
     rawFields?: IMutField[];
     spec?: Specification;
     // TODO: Pending development
-    viewSpec?: IVisSpec[];
-    saveVisSpec?: (spec: IVisSpecForExport[]) => void;
+    importVisSettings?: IVisImportExportSettings;
+    onSaveVis?: (settings: IVisImportExportSettings) => void;
     hideDataSourceConfig?: boolean;
     i18nLang?: string;
     i18nResources?: { [lang: string]: Record<string, string | any> };
@@ -90,7 +92,8 @@ const App = observer<IGWProps>(function App(props) {
     const {
         dataSource = [],
         rawFields = [],
-        saveVisSpec,
+        onSaveVis,
+        importVisSettings,
         spec,
         i18nLang = 'en-US',
         i18nResources,
@@ -186,6 +189,15 @@ const App = observer<IGWProps>(function App(props) {
         }
     }, [vizStore, computation ?? commonStore.currentDataset.dataSource, computationTimeout]);
 
+    useEffect(() => {
+        if (!importVisSettings || importVisSettings.spec.length === 0) return;
+        vizStore.importStoInfo({
+            dataSets: importVisSettings.dataSet as IDataSet[],
+            dataSources: importVisSettings.dataSource as IDataSource[],
+            specList: importVisSettings.spec as IStoInfo['specList'],
+        });
+    }, [importVisSettings]);
+
     const darkMode = useCurrentMediaTheme(dark);
 
     const rendererRef = useRef<IReactVegaHandler>(null);
@@ -208,10 +220,6 @@ const App = observer<IGWProps>(function App(props) {
         <ErrorContext value={{ reportError }}>
             <ErrorBoundary fallback={<div>Something went wrong</div>} onError={props.onError}>
                 <div className={`${darkMode === 'dark' ? 'dark' : ''} App font-sans bg-white dark:bg-zinc-900 dark:text-white m-0 p-0`}>
-                    {/* <div className="grow-0">
-                <PageNav />
-            </div> */}
-
                     <div className="bg-white dark:bg-zinc-900 dark:text-white">
                         {!hideDataSourceConfig && <DataSourceSegment />}
                         <div className="px-2 mx-2">
@@ -232,7 +240,7 @@ const App = observer<IGWProps>(function App(props) {
                                     darkModePreference={dark}
                                     exclude={toolbar?.exclude}
                                     extra={toolbar?.extra}
-                                    saveVisSpec={saveVisSpec}
+                                    saveVisSettings={onSaveVis}
                                 />
                                 <CodeExport />
 

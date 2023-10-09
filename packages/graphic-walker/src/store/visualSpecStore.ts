@@ -17,6 +17,7 @@ import {
     ISortMode,
     IStackMode,
     IViewField,
+    IVisImportExportSettings,
     IVisSpec,
     IVisSpecForExport,
     IVisualConfig,
@@ -170,8 +171,6 @@ export class VizSpecStore {
                 visId: uniqueId(),
                 config: this.visualConfig,
                 encodings: this.draggableFieldState,
-                dataSet: this.commonStore.datasets,
-                datasource: this.commonStore.dataSources,
             })
         );
         makeAutoObservable(this, {
@@ -327,8 +326,6 @@ export class VizSpecStore {
                 visId: uniqueId(),
                 config: initVisualConfig(),
                 encodings: initEncoding(),
-                dataSet: this.commonStore.datasets,
-                datasource: this.commonStore.dataSources,
             })
         );
         this.visIndex = this.visList.length - 1;
@@ -915,7 +912,7 @@ export class VizSpecStore {
     public exportAsRaw() {
         const pureVisList = dumpsGWPureSpec(this.visList);
         return stringifyGWContent({
-            datasets: toJS(this.commonStore.datasets),
+            dataSets: toJS(this.commonStore.datasets),
             dataSources: this.commonStore.dataSources,
             specList: this.visSpecEncoder(pureVisList),
         });
@@ -925,16 +922,21 @@ export class VizSpecStore {
         return this.visSpecEncoder(pureVisList);
     }
 
-    public exportViewSpecWithCB(cb: (visualSpec: IVisSpecForExport[]) => void): void {
-        return cb(this.exportViewSpec());
+    public exportViewSpecAndData() {
+        const pureVisList = dumpsGWPureSpec(this.visList);
+        return this.visExportEncoder(this.visSpecEncoder(pureVisList) as IVisSpec[]);
+    }
+
+    public exportViewSpecWithCB(cb: (visualSettings: IVisImportExportSettings) => void): void {
+        return cb(this.exportViewSpecAndData());
     }
 
     public importStoInfo(stoInfo: IStoInfo) {
         this.visList = parseGWPureSpec(visSpecDecoder(forwardVisualConfigs(stoInfo.specList)));
         this.visIndex = 0;
-        this.commonStore.datasets = stoInfo.datasets;
+        this.commonStore.datasets = stoInfo.dataSets;
         this.commonStore.dataSources = stoInfo.dataSources;
-        this.commonStore.dsIndex = Math.max(stoInfo.datasets.length - 1, 0);
+        this.commonStore.dsIndex = Math.max(stoInfo.dataSets.length - 1, 0);
     }
 
     public importRaw(raw: string) {
@@ -1000,11 +1002,19 @@ export class VizSpecStore {
                     ...visSpec.config,
                     geojson: visSpec.config.geoUrl ? undefined : visSpec.config.geojson,
                 },
-                datasource: this.commonStore.dataSources,
-                dataSet: this.commonStore.datasets,
+                // datasource: this.commonStore.dataSources,
+                // dataSet: this.commonStore.datasets,
             };
         });
         return updatedVisList;
+    }
+
+    private visExportEncoder(visList: IVisSpec[]): IVisImportExportSettings {
+        return {
+            spec: visList,
+            dataSet: this.commonStore.datasets,
+            dataSource: this.commonStore.dataSources,
+        };
     }
 
     public get limit() {

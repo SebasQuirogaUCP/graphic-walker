@@ -1,7 +1,7 @@
-import { DraggableFieldState, IDataSet, IDataSource, IVisSpec, IVisSpecForExport, IVisualConfig } from "../interfaces";
-import { VisSpecWithHistory } from "../models/visSpecHistory";
 import { toJS } from 'mobx';
 import { GLOBAL_CONFIG } from '../config';
+import { DraggableFieldState, IDataSet, IDataSource, IVisSpec, IVisSpecForExport, IVisualConfig } from '../interfaces';
+import { VisSpecWithHistory } from '../models/visSpecHistory';
 
 export function dumpsGWPureSpec(list: VisSpecWithHistory[]): IVisSpec[] {
     return list.map((l) => l.exportGW());
@@ -33,7 +33,7 @@ export function initEncoding(): DraggableFieldState {
 }
 
 export function initVisualConfig(): IVisualConfig {
-    const [ geom ] = GLOBAL_CONFIG.GEMO_TYPES.generic;
+    const [geom] = GLOBAL_CONFIG.GEMO_TYPES.generic;
     return {
         defaultAggregated: true,
         geoms: [geom],
@@ -48,7 +48,7 @@ export function initVisualConfig(): IVisualConfig {
         scaleIncludeUnmatchedChoropleth: false,
         background: undefined,
         size: {
-            mode: "auto",
+            mode: 'auto',
             width: 320,
             height: 200,
         },
@@ -116,11 +116,11 @@ export function resolveSpecFromStoInfo(info: IStoInfo) {
 }
 
 export interface IStoInfo {
-    datasets: IDataSet[];
+    dataSets: IDataSet[];
+    dataSources: IDataSource[];
     specList: {
         [K in keyof IVisSpecForExport]: K extends 'config' ? Partial<IVisSpecForExport[K]> : IVisSpecForExport[K];
     }[];
-    dataSources: IDataSource[];
 }
 
 export function stringifyGWContent(info: IStoInfo) {

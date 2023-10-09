@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { exportedViewSpec } from '../../MockedData/TestData';
 import { Button } from '../../fields/filterField/tabs';
-import { IDataSet } from '../../interfaces';
+import { IDataSet, IDataSource } from '../../interfaces';
 import { useGlobalStore } from '../../store';
 import { IStoInfo } from '../../utils/save';
 import DefaultButton from '../button/default';
@@ -109,9 +109,9 @@ const CodeExport: React.FC = observer((props) => {
                     <Button
                         onClick={() => {
                             vizStore.importStoInfo({
-                                datasets: exportedViewSpec[0].dataSet as IDataSet[],
-                                dataSources: exportedViewSpec[0].datasource,
-                                specList: exportedViewSpec as IStoInfo['specList'],
+                                dataSets: exportedViewSpec.dataSet as IDataSet[],
+                                dataSources: exportedViewSpec.dataSource as IDataSource[],
+                                specList: exportedViewSpec.spec as IStoInfo['specList'],
                             });
                         }}
                     >

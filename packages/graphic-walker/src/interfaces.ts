@@ -294,13 +294,13 @@ export interface IVisSpec {
     readonly name?: string;
     readonly encodings: DeepReadonly<DraggableFieldState>;
     readonly config: DeepReadonly<IVisualConfig>;
-    readonly datasource: IRow[];
-    readonly dataSet: IDataSet[];
 }
 
 export type SetToArray<T> = T extends object ? (T extends Set<infer U> ? Array<U> : { [K in keyof T]: SetToArray<T[K]> }) : T;
 
 export type IVisSpecForExport = SetToArray<IVisSpec>;
+
+export type IVisImportExportSettings = { spec: IVisSpec[]; dataSource: IRow[]; dataSet: IDataSet[] };
 
 export type IFilterFieldForExport = SetToArray<IFilterField>;
 

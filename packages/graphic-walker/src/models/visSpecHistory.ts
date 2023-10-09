@@ -4,7 +4,7 @@ import { DeepReadonly, DraggableFieldState, IVisSpec, IVisualConfig } from '../i
 
 export class VisSpecWithHistory {
     readonly visId: IVisSpec['visId'];
-    private snapshots: Pick<IVisSpec, 'name' | 'encodings' | 'config' | 'dataSet' | 'datasource'>[];
+    private snapshots: Pick<IVisSpec, 'name' | 'encodings' | 'config'>[];
     private cursor: number;
 
     constructor(data: IVisSpec) {
@@ -14,8 +14,6 @@ export class VisSpecWithHistory {
                 name: data.name,
                 encodings: data.encodings,
                 config: data.config,
-                dataSet: data.dataSet,
-                datasource: data.datasource,
             },
         ];
         this.cursor = 0;
