@@ -17,6 +17,7 @@ embedGraphicWalker(document.getElementById('root') as HTMLElement, {
     ],
     // importVisSettings: exportedViewSpec as IVisImportExportSettings,
     // onSaveVis(settings) {
-    //     console.info(settings)
+    //     console.info('settings', settings);
     // },
+    // saveModalCategoryList: ['Demo', 'Sandbox', 'Dev01'],
 });

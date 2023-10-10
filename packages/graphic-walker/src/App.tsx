@@ -9,6 +9,7 @@ import CodeExport from './components/codeExport';
 import Errorpanel from './components/errorpanel';
 import ExplainData from './components/explainData';
 import GeoConfigPanel from './components/leafletRenderer/geoConfigPanel';
+import SaveVisualization from './components/saveVisualization';
 import type { ToolbarItemProps } from './components/toolbar';
 import VisualConfig from './components/visualConfig';
 import { getComputation } from './computation/clientComputation';
@@ -52,9 +53,9 @@ export interface IGWProps {
     dataSource?: IRow[];
     rawFields?: IMutField[];
     spec?: Specification;
-    // TODO: Pending development
     importVisSettings?: IVisImportExportSettings;
     onSaveVis?: (settings: IVisImportExportSettings) => void;
+    saveModalCategoryList?: Array<string>;
     hideDataSourceConfig?: boolean;
     i18nLang?: string;
     i18nResources?: { [lang: string]: Record<string, string | any> };
@@ -93,6 +94,7 @@ const App = observer<IGWProps>(function App(props) {
         dataSource = [],
         rawFields = [],
         onSaveVis,
+        saveModalCategoryList,
         importVisSettings,
         spec,
         i18nLang = 'en-US',
@@ -243,6 +245,7 @@ const App = observer<IGWProps>(function App(props) {
                                     saveVisSettings={onSaveVis}
                                 />
                                 <CodeExport />
+                                <SaveVisualization saveModalCategoryList={saveModalCategoryList} onSaveVis={onSaveVis} />
 
                                 <ExplainData themeKey={themeKey} dark={darkMode} />
                                 <VisualConfig />

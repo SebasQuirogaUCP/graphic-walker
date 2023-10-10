@@ -1002,8 +1002,6 @@ export class VizSpecStore {
                     ...visSpec.config,
                     geojson: visSpec.config.geoUrl ? undefined : visSpec.config.geojson,
                 },
-                // datasource: this.commonStore.dataSources,
-                // dataSet: this.commonStore.datasets,
             };
         });
         return updatedVisList;
@@ -1014,6 +1012,8 @@ export class VizSpecStore {
             spec: visList,
             dataSet: this.commonStore.datasets,
             dataSource: this.commonStore.dataSources,
+            category: this.commonStore.visNameAndCustomCategory.visCustomCategory,
+            visName: this.commonStore.visNameAndCustomCategory.visName,
         };
     }
 

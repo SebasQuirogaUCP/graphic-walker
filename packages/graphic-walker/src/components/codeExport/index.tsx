@@ -1,11 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { exportedViewSpec } from '../../MockedData/TestData';
-import { Button } from '../../fields/filterField/tabs';
-import { IDataSet, IDataSource } from '../../interfaces';
 import { useGlobalStore } from '../../store';
-import { IStoInfo } from '../../utils/save';
 import DefaultButton from '../button/default';
 import PrimaryButton from '../button/primary';
 import Modal from '../modal';
@@ -106,17 +102,6 @@ const CodeExport: React.FC = observer((props) => {
                             commonStore.setShowCodeExportPanel(false);
                         }}
                     />
-                    <Button
-                        onClick={() => {
-                            vizStore.importStoInfo({
-                                dataSets: exportedViewSpec.dataSet as IDataSet[],
-                                dataSources: exportedViewSpec.dataSource as IDataSource[],
-                                specList: exportedViewSpec.spec as IStoInfo['specList'],
-                            });
-                        }}
-                    >
-                        Importar
-                    </Button>
                 </div>
             </div>
         </Modal>

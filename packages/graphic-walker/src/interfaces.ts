@@ -300,7 +300,7 @@ export type SetToArray<T> = T extends object ? (T extends Set<infer U> ? Array<U
 
 export type IVisSpecForExport = SetToArray<IVisSpec>;
 
-export type IVisImportExportSettings = { spec: IVisSpec[]; dataSource: IRow[]; dataSet: IDataSet[] };
+export type IVisImportExportSettings = { visName: string; category: string; spec: IVisSpec[]; dataSource: IRow[]; dataSet: IDataSet[] };
 
 export type IFilterFieldForExport = SetToArray<IFilterField>;
 

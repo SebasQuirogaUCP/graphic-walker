@@ -1,11 +1,12 @@
-import { ICreateField, DataSet, Filters, IDataSet, IDataSetInfo, IDataSource, IMutField, IRow, ISegmentKey } from '../interfaces';
 import { makeAutoObservable, observable, toJS } from 'mobx';
-import { transData } from '../dataSource/utils';
 import { INestNode } from '../components/pivotTable/inteface';
+import { transData } from '../dataSource/utils';
+import { DataSet, Filters, ICreateField, IDataSet, IDataSetInfo, IDataSource, IMutField, IRow, ISegmentKey } from '../interfaces';
 
 export class CommonStore {
     public datasets: IDataSet[] = [];
     public dataSources: IDataSource[] = [];
+    public visNameAndCustomCategory: { visName: string; visCustomCategory: string } = { visName: '', visCustomCategory: '' };
     public dsIndex: number = 0;
     public tmpDSName: string = '';
     public tmpDSRawFields: IMutField[] = [];
@@ -14,19 +15,20 @@ export class CommonStore {
     public showLogSettingPanel: boolean = false;
     public showBinSettingPanel: boolean = false;
     public showInsightBoard: boolean = false;
-    public createField: ICreateField | undefined = undefined; 
+    public createField: ICreateField | undefined = undefined;
     public vizEmbededMenu: { show: boolean; position: [number, number] } = { show: false, position: [0, 0] };
     public showDataConfig: boolean = false;
     public showCodeExportPanel: boolean = false;
+    public showSaveVisualizationPanel: boolean = false;
     public showVisualConfigPanel: boolean = false;
     public showGeoJSONConfigPanel: boolean = false;
     public filters: Filters = {};
     public segmentKey: ISegmentKey = ISegmentKey.vis;
     public selectedMarkObject: Record<string, string | number | undefined> = {};
-    public tableCollapsedHeaderMap: Map<string, INestNode["path"]> = new Map();
+    public tableCollapsedHeaderMap: Map<string, INestNode['path']> = new Map();
     public showErrorResolutionPanel: number = 0;
 
-    constructor () {
+    constructor() {
         this.datasets = [];
         this.dataSources = [];
         makeAutoObservable(this, {
@@ -36,96 +38,99 @@ export class CommonStore {
             tableCollapsedHeaderMap: observable.ref,
         });
     }
-    public get currentDataset (): DataSet {
+    public get currentDataset(): DataSet {
         const datasetIndex = this.dsIndex;
         if (this.datasets.length > 0) {
             const dataSourceId = this.datasets[datasetIndex].dsId;
-            const dataSource = this.dataSources.find(d => d.id === dataSourceId);
-            const rawFields = toJS(this.datasets[datasetIndex].rawFields)//.concat(createCountField())
+            const dataSource = this.dataSources.find((d) => d.id === dataSourceId);
+            const rawFields = toJS(this.datasets[datasetIndex].rawFields); //.concat(createCountField())
             // const base = extendCountField((dataSource ? dataSource.data : []), rawFields)
             return {
                 ...this.datasets[datasetIndex],
                 dataSource: dataSource?.data ?? [],
-                rawFields
-            }
+                rawFields,
+            };
         }
         return {
             id: '__null_ds__',
             name: 'Empty Dataset',
             rawFields: [],
-            dataSource: []
-        }
+            dataSource: [],
+        };
     }
-    public setSegmentKey (sk: ISegmentKey) {
+    public setSegmentKey(sk: ISegmentKey) {
         this.segmentKey = sk;
     }
-    public setShowDSPanel (show: boolean) {
+    public setShowDSPanel(show: boolean) {
         this.showDSPanel = show;
     }
-    public setShowDataConfig (show: boolean) {
+    public setShowDataConfig(show: boolean) {
         this.showDataConfig = show;
     }
-    public setShowInsightBoard (show: boolean) {
+    public setShowInsightBoard(show: boolean) {
         this.showInsightBoard = show;
     }
-    public showEmbededMenu (position: [number, number]) {
+    public showEmbededMenu(position: [number, number]) {
         this.vizEmbededMenu.show = true;
         this.vizEmbededMenu.position = position;
     }
-    public setShowCodeExportPanel (show: boolean) {
+    public setShowCodeExportPanel(show: boolean) {
         this.showCodeExportPanel = show;
     }
-    public setShowVisualConfigPanel (show: boolean) {
+    public setShowSaveVisualizationPanel(show: boolean) {
+        this.showSaveVisualizationPanel = show;
+    }
+    public setShowVisualConfigPanel(show: boolean) {
         this.showVisualConfigPanel = show;
     }
-    public setShowLogSettingPanel (show: boolean) {
+    public setShowLogSettingPanel(show: boolean) {
         this.showLogSettingPanel = show;
     }
-    public setShowBinSettingPanel (show: boolean) {
+    public setShowBinSettingPanel(show: boolean) {
         this.showBinSettingPanel = show;
     }
-    public setCreateField ( field: ICreateField ){
+    public setCreateField(field: ICreateField) {
         this.createField = field;
     }
-    public updateTableCollapsedHeader (node: INestNode) {
-        const {uniqueKey, height} = node;
+    public updateTableCollapsedHeader(node: INestNode) {
+        const { uniqueKey, height } = node;
         if (height < 1) return;
-        const updatedMap = new Map(this.tableCollapsedHeaderMap)
+        const updatedMap = new Map(this.tableCollapsedHeaderMap);
         // if some child nodes of the incoming node are collapsed, remove them first
         updatedMap.forEach((existingPath, existingKey) => {
             if (existingKey.startsWith(uniqueKey) && existingKey.length > uniqueKey.length) {
-                updatedMap.delete(existingKey)
+                updatedMap.delete(existingKey);
             }
-        })
+        });
         if (!updatedMap.has(uniqueKey)) {
-            updatedMap.set(uniqueKey, node.path)
+            updatedMap.set(uniqueKey, node.path);
         } else {
-            updatedMap.delete(uniqueKey)
+            updatedMap.delete(uniqueKey);
         }
-        this.tableCollapsedHeaderMap = updatedMap
-    }
-    public resetTableCollapsedHeader () {
-        const updatedMap: Map<string, INestNode["path"]> = new Map();
         this.tableCollapsedHeaderMap = updatedMap;
     }
-    public setShowGeoJSONConfigPanel (show: boolean) {
+    public resetTableCollapsedHeader() {
+        const updatedMap: Map<string, INestNode['path']> = new Map();
+        this.tableCollapsedHeaderMap = updatedMap;
+    }
+    public setShowGeoJSONConfigPanel(show: boolean) {
         this.showGeoJSONConfigPanel = show;
     }
-    public closeEmbededMenu () {
+    public closeEmbededMenu() {
         this.vizEmbededMenu.show = false;
     }
-    public initTempDS () {
-        this.tmpDSName = 'New Dataset'
+    public initTempDS() {
+        this.tmpDSName = 'New Dataset';
         this.tmpDSRawFields = [];
         this.tmpDataSource = [];
     }
-    public updateTempFields (fields: IMutField[]) {
+    public updateTempFields(fields: IMutField[]) {
         this.tmpDSRawFields = fields;
     }
 
-    public updateCurrentDatasetMetas (fid: string, diffMeta: Partial<IMutField>) {
+    public updateCurrentDatasetMetas(fid: string, diffMeta: Partial<IMutField>) {
         const dataset = this.datasets[this.dsIndex];
-        const field = dataset.rawFields.find(f => f.fid === fid);
+        const field = dataset.rawFields.find((f) => f.fid === fid);
         if (field) {
             for (let mk in diffMeta) {
                 field[mk] = diffMeta[mk];
@@ -133,8 +138,8 @@ export class CommonStore {
         }
     }
 
-    public updateTempDatasetMetas (fid: string, diffMeta: Partial<IMutField>) {
-        const field = this.tmpDSRawFields.find(f => f.fid === fid);
+    public updateTempDatasetMetas(fid: string, diffMeta: Partial<IMutField>) {
+        const field = this.tmpDSRawFields.find((f) => f.fid === fid);
         if (field) {
             for (let mk in diffMeta) {
                 field[mk] = diffMeta[mk];
@@ -142,86 +147,86 @@ export class CommonStore {
         }
     }
 
-    public updateTempFieldAnalyticType (fieldKey: string, analyticType: IMutField['analyticType']) {
-        const field = this.tmpDSRawFields.find(f => f.fid === fieldKey);
+    public updateTempFieldAnalyticType(fieldKey: string, analyticType: IMutField['analyticType']) {
+        const field = this.tmpDSRawFields.find((f) => f.fid === fieldKey);
         if (field) {
             field.analyticType = analyticType;
         }
     }
 
-    public updateTempFieldSemanticType (fieldKey: string, semanticType: IMutField['semanticType']) {
-        const field = this.tmpDSRawFields.find(f => f.fid === fieldKey);
+    public updateTempFieldSemanticType(fieldKey: string, semanticType: IMutField['semanticType']) {
+        const field = this.tmpDSRawFields.find((f) => f.fid === fieldKey);
         if (field) {
             field.semanticType = semanticType;
         }
     }
 
-    public updateTempName (name: string) {
+    public updateTempName(name: string) {
         this.tmpDSName = name;
     }
 
-    public updateTempDS (rawData: IRow[]) {
+    public updateTempDS(rawData: IRow[]) {
         const result = transData(rawData);
         this.tmpDataSource = result.dataSource;
         this.tmpDSRawFields = result.fields;
     }
     /**
      * update temp dataset (standard) with dataset info
-     * @param dataset 
+     * @param dataset
      */
-    public updateTempSTDDS (dataset: IDataSetInfo) {
+    public updateTempSTDDS(dataset: IDataSetInfo) {
         this.tmpDataSource = dataset.dataSource;
         this.tmpDSRawFields = dataset.rawFields;
         this.tmpDSName = dataset.name;
     }
 
-    public commitTempDS () {
+    public commitTempDS() {
         const { tmpDSName, tmpDSRawFields, tmpDataSource } = this;
         this.addAndUseDS({
             dataSource: tmpDataSource,
             rawFields: tmpDSRawFields,
-            name: tmpDSName
-        })
+            name: tmpDSName,
+        });
         this.setShowDSPanel(false);
         this.initTempDS();
     }
 
-    public startDSBuildingTask () {
+    public startDSBuildingTask() {
         this.initTempDS();
         this.showDSPanel = true;
     }
     public addAndUseDS(dataset: IDataSetInfo, datasetId?: string | undefined) {
         const id = this.addDS(dataset, datasetId);
         this.dsIndex = this.datasets.length - 1;
-        return id
+        return id;
     }
     public addDS(dataset: IDataSetInfo, datasetId?: string | undefined) {
         const timestamp = new Date().getTime();
-        const dataSetId = datasetId || `dst-${timestamp}`
+        const dataSetId = datasetId || `dst-${timestamp}`;
         const dataSourceId = `dse-${timestamp}`;
         this.dataSources.push({
             id: dataSourceId,
-            data: dataset.dataSource
-        })
+            data: dataset.dataSource,
+        });
         this.datasets.push({
             id: dataSetId,
             name: dataset.name,
             rawFields: dataset.rawFields,
-            dsId: dataSourceId
-        })
+            dsId: dataSourceId,
+        });
         return dataSourceId;
     }
     public removeDS(datasetId: string) {
-        const datasetIndex = this.datasets.findIndex(d => d.id === datasetId);
+        const datasetIndex = this.datasets.findIndex((d) => d.id === datasetId);
         if (datasetIndex > -1) {
             const dataSourceId = this.datasets[datasetIndex].id;
-            const dataSourceIndex = this.dataSources.findIndex(d => d.id === dataSourceId);
+            const dataSourceIndex = this.dataSources.findIndex((d) => d.id === dataSourceId);
             this.dataSources.splice(dataSourceIndex, 1);
             this.datasets.splice(datasetIndex, 1);
         }
     }
     public useDS(datasetId: string) {
-        const datasetIndex = this.datasets.findIndex(d => d.id === datasetId);
+        const datasetIndex = this.datasets.findIndex((d) => d.id === datasetId);
         if (datasetIndex > -1) {
             this.dsIndex = datasetIndex;
         }
@@ -230,14 +235,14 @@ export class CommonStore {
         this.addDS({
             name: 'new dataset',
             dataSource: [],
-            rawFields: []
-        })
+            rawFields: [],
+        });
     }
-    public setFilters (props: Filters) {
+    public setFilters(props: Filters) {
         this.filters = props;
     }
 
-    public updateSelectedMarkObject (newMarkObj) {
+    public updateSelectedMarkObject(newMarkObj) {
         this.selectedMarkObject = newMarkObj;
     }
 
@@ -245,8 +250,18 @@ export class CommonStore {
         this.showErrorResolutionPanel = errCode;
     }
 
-    public destroy () {
+    public destroy() {
         this.dataSources = [];
         this.datasets = [];
+    }
+
+    /**
+     * Saves the general name and the customCategory when user saves visualizations
+     */
+    public setVisNameAndCustomCategory({ name, category }: { name: string; category: string }) {
+        console.log('category: ', category);
+        console.log('name: ', name);
+        this.visNameAndCustomCategory.visName = name;
+        this.visNameAndCustomCategory.visCustomCategory = category;
     }
 }
