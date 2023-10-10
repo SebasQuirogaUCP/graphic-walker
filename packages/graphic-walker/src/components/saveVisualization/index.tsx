@@ -72,7 +72,7 @@ const SaveVisualization: React.FC<Pick<IGWProps, 'saveModalCategoryList' | 'onSa
                             className="block w-full rounded-md border-0 px-2 py-1.5 bg-transparent shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             onChange={(e) => {
                                 e.defaultPrevented;
-                                console.info(e.target.value);
+                                setForm({ name: form.name, category: e.target.value });
                             }}
                         />
                         <datalist id="options" style={{ width: '1000px' }}>
