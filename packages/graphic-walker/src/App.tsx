@@ -193,6 +193,7 @@ const App = observer<IGWProps>(function App(props) {
 
     useEffect(() => {
         if (!importVisSettings || importVisSettings.spec.length === 0) return;
+        commonStore.setVisNameAndCustomCategory({ category: importVisSettings.category ?? '', name: importVisSettings.visName ?? '' });
         vizStore.importStoInfo({
             dataSets: importVisSettings.dataSet as IDataSet[],
             dataSources: importVisSettings.dataSource as IDataSource[],
