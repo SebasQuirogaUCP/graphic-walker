@@ -6,7 +6,10 @@ import { DataSet, Filters, ICreateField, IDataSet, IDataSetInfo, IDataSource, IM
 export class CommonStore {
     public datasets: IDataSet[] = [];
     public dataSources: IDataSource[] = [];
-    public visNameAndCustomCategory: { visName: string; visCustomCategory: string } = { visName: '', visCustomCategory: '' };
+    public visNameAndCustomCategory: { visName: string | undefined; visCustomCategory: string | undefined } = {
+        visName: undefined,
+        visCustomCategory: undefined,
+    };
     public dsIndex: number = 0;
     public tmpDSName: string = '';
     public tmpDSRawFields: IMutField[] = [];
@@ -259,8 +262,6 @@ export class CommonStore {
      * Saves the general name and the customCategory when user saves visualizations
      */
     public setVisNameAndCustomCategory({ name, category }: { name: string; category: string }) {
-        console.log('category: ', category);
-        console.log('name: ', name);
         this.visNameAndCustomCategory.visName = name;
         this.visNameAndCustomCategory.visCustomCategory = category;
     }

@@ -28,6 +28,7 @@ const SaveVisualization: React.FC<Pick<IGWProps, 'saveModalCategoryList' | 'onSa
                     <div className="mt-2">
                         <span className="text-sm">Name</span>
                         <input
+                            defaultValue={commonStore.visNameAndCustomCategory.visName ?? ''}
                             onChange={(e) => {
                                 setForm({ name: e.target.value, category: form?.category });
                             }}
@@ -35,8 +36,6 @@ const SaveVisualization: React.FC<Pick<IGWProps, 'saveModalCategoryList' | 'onSa
                             name="text"
                             className="mb-2 block w-full rounded-md border-0 px-2 py-1.5 bg-transparent shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
-
-                        <span className="text-sm mt-2">Category</span>
 
                         {/*** Just for select ***/}
                         {/* <select
@@ -65,21 +64,28 @@ const SaveVisualization: React.FC<Pick<IGWProps, 'saveModalCategoryList' | 'onSa
                             />
                         )} */}
 
-                        <input
-                            type="text"
-                            id="custom-select"
-                            list="options"
-                            className="block w-full rounded-md border-0 px-2 py-1.5 bg-transparent shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            onChange={(e) => {
-                                e.defaultPrevented;
-                                setForm({ name: form.name, category: e.target.value });
-                            }}
-                        />
-                        <datalist id="options" style={{ width: '1000px' }}>
-                            {saveModalCategoryList?.map((c, i) => {
-                                return <option value={c} key={i} />;
-                            })}
-                        </datalist>
+                        {saveModalCategoryList && saveModalCategoryList.length > 0 && (
+                            <>
+                                <span className="text-sm mt-2">Category</span>
+
+                                <input
+                                    defaultValue={commonStore.visNameAndCustomCategory.visCustomCategory ?? ''}
+                                    type="text"
+                                    id="custom-select"
+                                    list="options"
+                                    className="block w-full rounded-md border-0 px-2 py-1.5 bg-transparent shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    onChange={(e) => {
+                                        e.defaultPrevented;
+                                        setForm({ name: form.name, category: e.target.value });
+                                    }}
+                                />
+                                <datalist id="options">
+                                    {saveModalCategoryList?.map((c, i) => {
+                                        return <option value={c} key={i} />;
+                                    })}
+                                </datalist>
+                            </>
+                        )}
                     </div>
 
                     <div className="mt-4 flex justify-end">
