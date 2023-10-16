@@ -161,6 +161,11 @@ export class VizSpecStore {
     public removeConfirmIdx: number | null = null;
     // TODO
     public computationFunction: IComputationFunction = async () => [];
+    public visNameAndCustomCategory: { visName: string | undefined; visCustomCategory: string | undefined } = {
+        visName: undefined,
+        visCustomCategory: undefined,
+    };
+    public showSaveVisualizationPanel: boolean = false;
     constructor(commonStore: CommonStore) {
         this.commonStore = commonStore;
         this.draggableFieldState = initEncoding();
@@ -355,6 +360,13 @@ export class VizSpecStore {
         this.visList[visIndex].updateLatest({
             name,
         });
+    }
+    public setEntireVisNameAndCustomCategory(entireVisName: string, visCustomCategory: string) {
+        this.visNameAndCustomCategory.visName = entireVisName;
+        this.visNameAndCustomCategory.visCustomCategory = visCustomCategory;
+    }
+    public setShowSaveVisualizationPanel(show: boolean) {
+        this.showSaveVisualizationPanel = show;
     }
     public initState() {
         this.useMutable((tab) => {
@@ -1012,8 +1024,8 @@ export class VizSpecStore {
             spec: visList,
             dataSet: this.commonStore.datasets,
             dataSource: this.commonStore.dataSources,
-            category: this.commonStore.visNameAndCustomCategory.visCustomCategory,
-            visName: this.commonStore.visNameAndCustomCategory.visName,
+            category: this.visNameAndCustomCategory.visCustomCategory,
+            visName: this.visNameAndCustomCategory.visName,
         };
     }
 

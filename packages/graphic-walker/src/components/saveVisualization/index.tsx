@@ -9,7 +9,7 @@ import Modal from '../modal';
 
 const SaveVisualization: React.FC<Pick<IGWProps, 'saveModalCategoryList' | 'onSaveVis'>> = observer(({ saveModalCategoryList, onSaveVis }) => {
     const { commonStore, vizStore } = useGlobalStore();
-    const { showSaveVisualizationPanel } = commonStore;
+    const { showSaveVisualizationPanel } = vizStore;
     const { t } = useTranslation();
     const initialCategory = saveModalCategoryList && saveModalCategoryList.length > 0 ? saveModalCategoryList[0] : '';
     const [form, setForm] = useState<{ name: string | undefined; category: string | undefined }>({ name: undefined, category: initialCategory });
@@ -19,7 +19,7 @@ const SaveVisualization: React.FC<Pick<IGWProps, 'saveModalCategoryList' | 'onSa
             <Modal
                 show={showSaveVisualizationPanel}
                 onClose={() => {
-                    commonStore.setShowSaveVisualizationPanel(false);
+                    vizStore.setShowSaveVisualizationPanel(false);
                 }}
             >
                 <div>
@@ -28,7 +28,7 @@ const SaveVisualization: React.FC<Pick<IGWProps, 'saveModalCategoryList' | 'onSa
                     <div className="mt-2">
                         <span className="text-sm">Name</span>
                         <input
-                            defaultValue={commonStore.visNameAndCustomCategory.visName ?? ''}
+                            defaultValue={vizStore.visNameAndCustomCategory.visName ?? ''}
                             onChange={(e) => {
                                 setForm({ name: e.target.value, category: form?.category });
                             }}
@@ -69,7 +69,7 @@ const SaveVisualization: React.FC<Pick<IGWProps, 'saveModalCategoryList' | 'onSa
                                 <span className="text-sm mt-2">Category</span>
 
                                 <input
-                                    defaultValue={commonStore.visNameAndCustomCategory.visCustomCategory ?? ''}
+                                    defaultValue={vizStore.visNameAndCustomCategory.visCustomCategory ?? ''}
                                     type="text"
                                     id="custom-select"
                                     list="options"
@@ -93,11 +93,11 @@ const SaveVisualization: React.FC<Pick<IGWProps, 'saveModalCategoryList' | 'onSa
                             className="mr-2"
                             text={'Save'}
                             onClick={() => {
-                                commonStore.setVisNameAndCustomCategory({
-                                    name: form?.name ?? commonStore.visNameAndCustomCategory.visName ?? 'unknown',
-                                    category: form?.category ?? commonStore.visNameAndCustomCategory.visCustomCategory ?? 'unknown category',
-                                });
-                                commonStore.setShowSaveVisualizationPanel(false);
+                                vizStore.setEntireVisNameAndCustomCategory(
+                                    form?.name ?? vizStore.visNameAndCustomCategory.visName ?? 'unknown',
+                                    form?.category ?? vizStore.visNameAndCustomCategory.visCustomCategory ?? 'unknown category'
+                                );
+                                vizStore.setShowSaveVisualizationPanel(false);
                                 vizStore.exportViewSpecWithCB((visSettings) => (onSaveVis ? onSaveVis(visSettings) : visSettings));
                             }}
                         />
@@ -105,7 +105,7 @@ const SaveVisualization: React.FC<Pick<IGWProps, 'saveModalCategoryList' | 'onSa
                         <DefaultButton
                             text={t('actions.cancel')}
                             onClick={() => {
-                                commonStore.setShowSaveVisualizationPanel(false);
+                                vizStore.setShowSaveVisualizationPanel(false);
                             }}
                         />
                     </div>

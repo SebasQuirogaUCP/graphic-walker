@@ -6,10 +6,7 @@ import { DataSet, Filters, ICreateField, IDataSet, IDataSetInfo, IDataSource, IM
 export class CommonStore {
     public datasets: IDataSet[] = [];
     public dataSources: IDataSource[] = [];
-    public visNameAndCustomCategory: { visName: string | undefined; visCustomCategory: string | undefined } = {
-        visName: undefined,
-        visCustomCategory: undefined,
-    };
+
     public dsIndex: number = 0;
     public tmpDSName: string = '';
     public tmpDSRawFields: IMutField[] = [];
@@ -22,7 +19,6 @@ export class CommonStore {
     public vizEmbededMenu: { show: boolean; position: [number, number] } = { show: false, position: [0, 0] };
     public showDataConfig: boolean = false;
     public showCodeExportPanel: boolean = false;
-    public showSaveVisualizationPanel: boolean = false;
     public showVisualConfigPanel: boolean = false;
     public showGeoJSONConfigPanel: boolean = false;
     public filters: Filters = {};
@@ -80,9 +76,7 @@ export class CommonStore {
     public setShowCodeExportPanel(show: boolean) {
         this.showCodeExportPanel = show;
     }
-    public setShowSaveVisualizationPanel(show: boolean) {
-        this.showSaveVisualizationPanel = show;
-    }
+
     public setShowVisualConfigPanel(show: boolean) {
         this.showVisualConfigPanel = show;
     }
@@ -256,13 +250,5 @@ export class CommonStore {
     public destroy() {
         this.dataSources = [];
         this.datasets = [];
-    }
-
-    /**
-     * Saves the general name and the customCategory when user saves visualizations
-     */
-    public setVisNameAndCustomCategory({ name, category }: { name: string; category: string }) {
-        this.visNameAndCustomCategory.visName = name;
-        this.visNameAndCustomCategory.visCustomCategory = category;
     }
 }

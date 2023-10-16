@@ -130,7 +130,7 @@ const VisualSettings: React.FC<IVisualSettings> = ({ rendererHandler, darkModePr
                 label: 'Save Visualization',
                 icon: () => <ArrowUpOnSquareIcon />,
                 onClick: () => {
-                    commonStore.setShowSaveVisualizationPanel(true);
+                    vizStore.setShowSaveVisualizationPanel(true);
                 },
             },
             {
