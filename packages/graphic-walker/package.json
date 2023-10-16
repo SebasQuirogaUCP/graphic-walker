@@ -1,6 +1,6 @@
 {
     "name": "graphic-walker-customized1",
-    "version": "0.4.23",
+    "version": "0.4.24",
     "scripts": {
         "dev:front_end": "vite --host",
         "dev": "npm run dev:front_end",

@@ -93,7 +93,10 @@ const SaveVisualization: React.FC<Pick<IGWProps, 'saveModalCategoryList' | 'onSa
                             className="mr-2"
                             text={'Save'}
                             onClick={() => {
-                                commonStore.setVisNameAndCustomCategory({ name: form?.name ?? 'unknown', category: form?.category ?? 'unknown category' });
+                                commonStore.setVisNameAndCustomCategory({
+                                    name: form?.name ?? commonStore.visNameAndCustomCategory.visName ?? 'unknown',
+                                    category: form?.category ?? commonStore.visNameAndCustomCategory.visCustomCategory ?? 'unknown category',
+                                });
                                 commonStore.setShowSaveVisualizationPanel(false);
                                 vizStore.exportViewSpecWithCB((visSettings) => (onSaveVis ? onSaveVis(visSettings) : visSettings));
                             }}
