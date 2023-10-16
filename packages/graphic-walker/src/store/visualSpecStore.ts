@@ -943,12 +943,14 @@ export class VizSpecStore {
         return cb(this.exportViewSpecAndData());
     }
 
-    public importStoInfo(stoInfo: IStoInfo) {
+    public importStoInfo(stoInfo: IStoInfo & { visName?: string; visCustomCategory?: string }) {
         this.visList = parseGWPureSpec(visSpecDecoder(forwardVisualConfigs(stoInfo.specList)));
         this.visIndex = 0;
         this.commonStore.datasets = stoInfo.dataSets;
         this.commonStore.dataSources = stoInfo.dataSources;
         this.commonStore.dsIndex = Math.max(stoInfo.dataSets.length - 1, 0);
+        this.visNameAndCustomCategory.visCustomCategory = stoInfo.visCustomCategory;
+        this.visNameAndCustomCategory.visName = stoInfo.visName;
     }
 
     public importRaw(raw: string) {
