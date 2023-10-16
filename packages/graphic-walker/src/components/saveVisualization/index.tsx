@@ -12,7 +12,13 @@ const SaveVisualization: React.FC<Pick<IGWProps, 'saveModalCategoryList' | 'onSa
     const { showSaveVisualizationPanel } = vizStore;
     const { t } = useTranslation();
     const initialCategory = saveModalCategoryList && saveModalCategoryList.length > 0 ? saveModalCategoryList[0] : '';
-    const [form, setForm] = useState<{ name: string | undefined; category: string | undefined }>({ name: undefined, category: initialCategory });
+    const [form, setForm] = useState<{ name: string | undefined; category: string | undefined }>({
+        name: undefined,
+        category: vizStore.visNameAndCustomCategory.visCustomCategory ?? initialCategory,
+    });
+
+    console.log('vizStore.visNameAndCustomCategory.visCustomCategory : ', vizStore.visNameAndCustomCategory.visCustomCategory);
+    console.log('saveModalCategoryList: ', saveModalCategoryList);
 
     return (
         <div className="border-b border-gray-200 dark:border-gray-700 overflow-y-visible">
