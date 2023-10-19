@@ -16,6 +16,7 @@ embedGraphicWalker(document.getElementById('root') as HTMLElement, {
         },
     ],
     // importVisSettings: exportedViewSpec as IVisImportExportSettings,
+    // importVisSettings: { category: 'Demo', visName: 'Test Vis Name', dataSet: [], dataSource: [], spec: [] } as IVisImportExportSettings,
     // onSaveVis(settings) {
     //     console.info('settings', settings);
     // },

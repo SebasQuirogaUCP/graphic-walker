@@ -192,14 +192,19 @@ const App = observer<IGWProps>(function App(props) {
     }, [vizStore, computation ?? commonStore.currentDataset.dataSource, computationTimeout]);
 
     useEffect(() => {
-        if (!importVisSettings || importVisSettings.spec.length === 0) return;
-        vizStore.importStoInfo({
-            dataSets: importVisSettings.dataSet as IDataSet[],
-            dataSources: importVisSettings.dataSource as IDataSource[],
-            specList: importVisSettings.spec as IStoInfo['specList'],
-            visCustomCategory: importVisSettings.category,
-            visName: importVisSettings.visName,
-        });
+        if (importVisSettings && importVisSettings.spec.length > 0) {
+            vizStore.importStoInfo({
+                dataSets: importVisSettings.dataSet as IDataSet[],
+                dataSources: importVisSettings.dataSource as IDataSource[],
+                specList: importVisSettings.spec as IStoInfo['specList'],
+                visCustomCategory: importVisSettings.category,
+                visName: importVisSettings.visName,
+            });
+        }
+
+        if (importVisSettings && importVisSettings.category && importVisSettings.visName) {
+            vizStore.setEntireVisNameAndCustomCategory(importVisSettings.visName, importVisSettings.category);
+        }
     }, [importVisSettings]);
 
     const darkMode = useCurrentMediaTheme(dark);
